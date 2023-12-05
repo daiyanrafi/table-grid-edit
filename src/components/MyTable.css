@@ -1,0 +1,24 @@
+.my-table-container {
+    margin: 0 auto;
+    max-width: 800px;
+  }
+
+/* case-number */
+.centered-column {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* status column */
+.status-column.completed {
+  color: green;
+}
+
+.status-column.incomplete {
+  color: red;
+}
+
+/* .status-column {
+  font-weight: bold;
+} */

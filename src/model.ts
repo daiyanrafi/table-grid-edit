@@ -1,3 +1,4 @@
+//interfaces
 export interface ExampleDataItem {
     userId: number;
     id: number;

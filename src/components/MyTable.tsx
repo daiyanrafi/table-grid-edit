@@ -18,10 +18,10 @@ const MyTable: React.FC = () => {
       setItems(data);
 
       const newColumns: IColumn[] = [
-        { key: 'id', name: 'User ID', fieldName: 'id', minWidth: 80, maxWidth: 120, isResizable: true, isSorted: false, isSortedDescending: false },
-        { key: 'title', name: 'Case Title', fieldName: 'title', minWidth: 150, maxWidth: 250, isResizable: true, isSorted: false, isSortedDescending: false, onRender: renderEditableColumn },
-        { key: 'userId', name: 'Case Number', fieldName: 'userId', minWidth: 80, maxWidth: 120, isResizable: true, isSorted: false, isSortedDescending: false, onRender: renderCenteredColumn },
-        { key: 'completed', name: 'Status', fieldName: 'completed', minWidth: 120, maxWidth: 120, isResizable: true, isSorted: false, isSortedDescending: false, onRender: renderStatusColumn },
+        { key: 'id', name: 'User ID', fieldName: 'id', minWidth: 80, maxWidth: 120, isResizable: true},
+        { key: 'title', name: 'Case Title', fieldName: 'title', minWidth: 150, maxWidth: 250, isResizable: true, onRender: renderEditableColumn },
+        { key: 'userId', name: 'Case Number', fieldName: 'userId', minWidth: 80, maxWidth: 120, isResizable: true, onRender: renderCenteredColumn },
+        { key: 'completed', name: 'Status', fieldName: 'completed', minWidth: 120, maxWidth: 120, isResizable: true, onRender: renderStatusColumn },
       ];
 
       setColumns(newColumns);
@@ -32,63 +32,47 @@ const MyTable: React.FC = () => {
 
   //double click
   const handleDoubleClick = (item: ExampleDataItem) => {
-    console.log('handleInputChange called, double click');
+    console.log('handleInputChange called, double click', item);
     setEditableItemId((prevId) => (prevId === item.id ? null : item.id));
   };
 
+    // handle input key down
+    const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, itemId: number) => {
+      console.log('handleInputKeyDown called, new gg');
+      if (e.key === 'Enter') {
+        setItems((prevItems) => {
+          const updatedItems = prevItems.map((item) =>
+            item.id === itemId
+              ? { ...item, title: item.editedTitle !== undefined ? item.editedTitle : item.title, editedTitle: undefined }
+              : item
+          );
+          console.log('Updated Items: gg-3', updatedItems);
+          return updatedItems;
+        });
+        setEditableItemId(null);
+      }
+    };
+
   //edit render function
-  const renderEditableColumn = (item: ExampleDataItem) => {
-    if (editableItemId === item.id) {
-      return (
-        <input
-          type='text'
-          value={item.editedTitle != undefined ? item.editedTitle : item.title}
-          // value={item.editedTitle ?? item.title}
-          onChange={(e) => handlerInputChange(e, item.id)}
-          // onBlur={()=>{}}
-          onKeyDown={(e) => handleInputKeyDown(e, item.id)}
-        />
-      );
-    } else {
-      return (
-        <span onDoubleClick={() => handleDoubleClick(item)}>
-          {item.title}
-        </span>
-      );
-    }
-  };
+  const renderEditableColumn = (item: ExampleDataItem) => (
+    editableItemId === item.id ? (
+      <input
+        type='text'
+        value={item.editedTitle ?? item.title}
+        onChange={(e) => handlerInputChange(e, item.id)}
+        onKeyDown={(e) => handleInputKeyDown(e, item.id)}
+      />
+    ) : (
+      <span onDoubleClick={() => handleDoubleClick(item)}>
+        {item.title}
+      </span>
+    )
+  );
+  
 
-  //handle input key and press
-  // const handleInputKeyPress = (e: React.KeyboardEvent<HTMLInputElement>, itemId: number) => {
-  //   if(e.key === 'Enter'){
-  //     const updatedItems = items.map((item) => 
-  //     item.id === itemId && item.editedTitle !== undefined ? {
-  //       ...item, title: item.editedTitle } : item
-  //     );
-  //     setItems(updatedItems);
-  //     setEditableItemId(null);
-  //   }
-  // };
-
-  //handle input key down
-  const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, itemId: number) => {
-    console.log('handleInputKeyDown called, new gg');
-    if (e.key === 'Enter') {
-      setItems((prevItems) => {
-        const updatedItems = prevItems.map((item) =>
-          item.id === itemId && item.editedTitle != undefined
-            ? { ...item, title: item.editedTitle, editedTitle: undefined }
-            : item
-        );
-        console.log('Updated Items: gg-3', updatedItems);
-        return updatedItems;
-      });
-      setEditableItemId(null);
-    }
-  };
   //handlee input change
   const handlerInputChange = (e: React.ChangeEvent<HTMLInputElement>, itemId: number) => {
-    console.log('handleInputChange called, value changing');
+    console.log('handleInputChange called, value changing', e.target.value);
     const updateItems = items.map((item) =>
       item.id === itemId ? { ...item, editedTitle: e.target.value } : item
     );
@@ -112,9 +96,11 @@ const MyTable: React.FC = () => {
   return (
     <div className="my-table-container">
       <DetailsList
-        key={items.length}
+        // key={items.length}
+        key={items.map(item => item.id).join(',')}
         items={items}
         columns={columns}
+        // onRenderItemColumn={renderEditableColumn}
         setKey="set"
         ariaLabelForSelectionColumn="Toggle selection"
         ariaLabelForSelectAllCheckbox="Toggle selection for all items"

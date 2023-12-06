@@ -8,7 +8,8 @@ import { ExampleDataItem } from "../model";
         throw new Error('Failed to fetch data');
       }
       const data = await response.json();
-      return data.slice(0, 100);
+      // return data.slice(0, 100);
+      return data.slice(1, 4);
     } catch (error) {
       console.error(error);
       return [];

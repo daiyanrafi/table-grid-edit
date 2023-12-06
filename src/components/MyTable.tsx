@@ -18,7 +18,7 @@ const MyTable: React.FC = () => {
       setItems(data);
 
       const newColumns: IColumn[] = [
-        { key: 'id', name: 'User ID', fieldName: 'id', minWidth: 80, maxWidth: 120, isResizable: true},
+        { key: 'id', name: 'User ID', fieldName: 'id', minWidth: 80, maxWidth: 120, isResizable: true },
         { key: 'title', name: 'Case Title', fieldName: 'title', minWidth: 150, maxWidth: 250, isResizable: true, onRender: renderEditableColumn },
         { key: 'userId', name: 'Case Number', fieldName: 'userId', minWidth: 80, maxWidth: 120, isResizable: true, onRender: renderCenteredColumn },
         { key: 'completed', name: 'Status', fieldName: 'completed', minWidth: 120, maxWidth: 120, isResizable: true, onRender: renderStatusColumn },
@@ -36,23 +36,6 @@ const MyTable: React.FC = () => {
     setEditableItemId((prevId) => (prevId === item.id ? null : item.id));
   };
 
-    // handle input key down
-    const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, itemId: number) => {
-      console.log('handleInputKeyDown called, new gg');
-      if (e.key === 'Enter') {
-        setItems((prevItems) => {
-          const updatedItems = prevItems.map((item) =>
-            item.id === itemId
-              ? { ...item, title: item.editedTitle !== undefined ? item.editedTitle : item.title, editedTitle: undefined }
-              : item
-          );
-          console.log('Updated Items: gg-3', updatedItems);
-          return updatedItems;
-        });
-        setEditableItemId(null);
-      }
-    };
-
   //edit render function
   const renderEditableColumn = (item: ExampleDataItem) => (
     editableItemId === item.id ? (
@@ -68,7 +51,7 @@ const MyTable: React.FC = () => {
       </span>
     )
   );
-  
+
 
   //handlee input change
   const handlerInputChange = (e: React.ChangeEvent<HTMLInputElement>, itemId: number) => {
@@ -78,6 +61,23 @@ const MyTable: React.FC = () => {
     );
     setItems(updateItems);
   }
+
+  // handle input key down
+  const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, itemId: number) => {
+    console.log('handleInputKeyDown called, new gg');
+    if (e.key === 'Enter') {
+      setItems((prevItems) => {
+        const updatedItems = prevItems.map((item) =>
+          item.id === itemId
+            ? { ...item, title: item.editedTitle !== undefined ? item.editedTitle : item.title, editedTitle: undefined }
+            : item
+        );
+        console.log('Updated Items: gg-3', updatedItems);
+        return updatedItems;
+      });
+      setEditableItemId(null);
+    }
+  };
 
   //Set column color
   const renderStatusColumn = (item: ExampleDataItem) => (
